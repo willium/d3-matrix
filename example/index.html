@@ -1,0 +1,60 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    
+    </style>
+  </head>
+  <body>
+    <svg width="960" height="600"></svg>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="./d3-matrix.js"></script>
+    <script>
+      var svg = d3.select("svg"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height");
+
+      var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+      var matrix = d3.matrix()
+        .size([width, height])
+        .cell(20)
+        .padding(5) 
+        .layout()
+
+      d3.json("matrix-data.json", function(error, data) {
+        if (error) throw error;
+
+        matrix.data(data.cells)
+          .rows((d) => d.a)
+          .columns((d) => d.b)
+          .sortRows((alpha, beta) => alpha.value < beta.value)
+          .sortColumns((alpha, beta) => alpha.value > beta.value)
+
+        // JOIN
+        var cells = svg.selectAll('rect')
+          .data(data.cells)
+
+        // EXIT
+        cells.exit().remove()
+
+        // ENTER
+        var cellsEnter = cells.enter().append('rect')
+          .attr('width', matrix.cell())
+          .attr('height', matrix.cell())
+          .attr('id', (_, i) => `cell-${i}`)
+
+        // MERGE
+        cells = cellsEnter.merge(cells)
+          .attr('x', (d) => matrix.x(d.a))
+          .attr('y', (d) => matrix.y(d.b))
+        
+      });
+    </script>
+  </body>
+</html>

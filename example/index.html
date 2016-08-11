@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,41 +17,43 @@
           width = +svg.attr("width"),
           height = +svg.attr("height");
 
-      var color = d3.scaleOrdinal(d3.schemeCategory20);
-
       var matrix = d3.matrix()
         .size([width, height])
         .cell(20)
         .padding(5) 
-        .layout()
+        .layout();
 
       d3.json("matrix-data.json", function(error, data) {
         if (error) throw error;
 
+        var color = d3.scaleOrdinal(d3.schemeCategory20)
+          .domain(data.cells.map(function(d) { return d.value; }))
+
         matrix.data(data.cells)
-          .rows((d) => d.a)
-          .columns((d) => d.b)
-          .sortRows((alpha, beta) => alpha.value < beta.value)
-          .sortColumns((alpha, beta) => alpha.value > beta.value)
+          .rows(function(d) { return d.a; })
+          .columns(function(d) { return d.b; })
+          .sortRows(function(alpha, beta) { return alpha.value < beta.value; })
+          .sortColumns(function(alpha, beta) { return alpha.value > beta.value; });
 
         // JOIN
         var cells = svg.selectAll('rect')
-          .data(data.cells)
+          .data(data.cells);
 
         // EXIT
-        cells.exit().remove()
+        cells.exit().remove();
 
         // ENTER
         var cellsEnter = cells.enter().append('rect')
           .attr('width', matrix.cell())
           .attr('height', matrix.cell())
-          .attr('id', (_, i) => `cell-${i}`)
+          .attr('data-value', function(d) { return d.value; })
+          .attr('fill', function(d) { return color(d.value); })
+          .attr('id', function(_, i) { return `cell-${i}`; });
 
         // MERGE
         cells = cellsEnter.merge(cells)
-          .attr('x', (d) => matrix.x(d.a))
-          .attr('y', (d) => matrix.y(d.b))
-        
+          .attr('x', function(d) { return matrix.x(d.a); })
+          .attr('y', function(d) { return matrix.y(d.b); });
       });
     </script>
   </body>

@@ -19,8 +19,8 @@
 
       var matrix = d3.matrix()
         .size([width, height])
-        .cell(20)
-        .padding(5) 
+        .cell(10)
+        .padding(2) 
         .layout();
 
       d3.json("matrix-data.json", function(error, data) {
@@ -30,10 +30,9 @@
           .domain(data.cells.map(function(d) { return d.value; }))
 
         matrix.data(data.cells)
+          .columns(function(d) { return d.product_code; })
           .rows(function(d) { return d.a; })
           .columns(function(d) { return d.b; })
-          .sortRows(function(alpha, beta) { return alpha.value < beta.value; })
-          .sortColumns(function(alpha, beta) { return alpha.value > beta.value; });
 
         // JOIN
         var cells = svg.selectAll('rect')

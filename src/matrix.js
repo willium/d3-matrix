@@ -7,13 +7,16 @@ export default function(data) {
       padding,
       cell,
       rows,
-      columns,
-      sortRows,
-      sortColumns;
+      columns;
 
   matrix.data = function(_data) {
     if (!arguments.length) return data;
     data = _data;
+    return matrix;
+  }
+
+  matrix.sort = function(_fn) {
+    data.sort(_fn);
     return matrix;
   }
 
@@ -53,25 +56,13 @@ export default function(data) {
 
   matrix.rows = function(_rows) {
     if (!arguments.length) return rows;
-    rows = matrix.x.domain(data.map(_rows));
+    rows = matrix.y.domain(data.map(_rows));
     return matrix;
   }
 
   matrix.columns = function(_columns) {
     if (!arguments.length) return columns;
-    columns = matrix.y.domain(data.map(_columns));
-    return matrix;
-  }
-
-  matrix.sortRows = function(_sortfn) {
-    if (!arguments.length) return sortRows;
-    sortRows = _sortfn;
-    return matrix;
-  }
-
-  matrix.sortColumns = function(_sortfn) {
-    if (!arguments.length) return sortColumns;
-    sortColumns = _sortfn;
+    columns = matrix.x.domain(data.map(_columns));
     return matrix;
   }
 
